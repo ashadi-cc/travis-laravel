@@ -1,16 +1,19 @@
 image: ashadicc/php-fpm
 
+services:
+  - mysql:5.7
+
 variables:
   MYSQL_DATABASE: laravel
   MYSQL_ROOT_PASSWORD: password
+  DB_HOST: mysql
+  DB_USERNAME: root
 
 stages:
   - test
 
 unit_test:
   stage: test
-  services:
-    - mariadb:latest
   script:
     - cp .env.example .env
     - composer install
