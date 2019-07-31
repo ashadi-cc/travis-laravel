@@ -1,0 +1,9 @@
+version: "3"
+services: 
+  mysql:
+    image: mariadb
+    environment: 
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=laravel
+    ports: 
+      - "3307:3306"
