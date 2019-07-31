@@ -6,8 +6,6 @@ services:
 variables:
   MYSQL_DATABASE: laravel
   MYSQL_ROOT_PASSWORD: password
-  DB_HOST: mysql
-  DB_USERNAME: root
 
 stages:
   - test
