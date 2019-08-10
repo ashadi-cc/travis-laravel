@@ -32,10 +32,25 @@ deploy_staging:
     - ssh-add <(echo "$SSH_PRIVATE_KEY")
     - mkdir -p ~/.ssh
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
-
-    - ~/.composer/vendor/bin/envoy run deploy --commit="$CI_COMMIT_SHA"
+    - ~/.composer/vendor/bin/envoy run deploy_staging
   environment:
     name: staging
     url: http://localhost
   only:
-    - dev
+    - develop
+
+deploy_production:
+  stage: deploy
+  script:
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    - ssh-add <(echo "$SSH_PRIVATE_KEY")
+    - mkdir -p ~/.ssh
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    - ~/.composer/vendor/bin/envoy run deploy --commit="$CI_COMMIT_SHA"
+  environment:
+    name: production
+    url: http://localhost
+  when: manual
+  only:
+    - master
