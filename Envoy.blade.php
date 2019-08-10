@@ -9,10 +9,15 @@
 @endsetup
 
 @story('deploy')
-    clone_repository
+    list
+    {{-- clone_repository
     run_composer
-    update_symlinks
+    update_symlinks --}}
 @endstory
+
+@task('list', ['on' => 'web'])
+    ls -l
+@endtask
 
 @task('clone_repository')
     echo 'Cloning repository'
