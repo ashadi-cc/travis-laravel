@@ -2,7 +2,7 @@
 
 @setup
     $repository = 'git@gitlab.com:ashadi-cc/ci-laravel.git';
-    $releases_dir = '/var/www/ci-laravel/releases';
+    $releases_dir = '/var/www/deploy/releases';
     $app_dir = '/var/www/ci-laravel';
     $release = date('YmdHis');
     $new_release_dir = $releases_dir .'/'. $release;
