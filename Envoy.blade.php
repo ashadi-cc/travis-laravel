@@ -46,7 +46,7 @@
 
 @task('clone_staging', ['on' => 'web'])
     echo 'Cloning repository'
-    [ -d {{ $app_dir }} ] || mkdir {{ $app_dir }} & git clone --depth 1 {{ $repository }} {{ $app_dir }}
+    [ -d {{ $app_dir }} ] || (mkdir {{ $app_dir }} && git clone --depth 1 {{ $repository }} {{ $app_dir }})
     [ -f {{ $app_dir }}/.env ] || cp {{ $app_dir }}/.env.exampe {{ $app_dir }}/.env
     cd {{ $app_dir }}
     git checkout develop
