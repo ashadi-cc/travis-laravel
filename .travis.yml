@@ -5,10 +5,21 @@ php:
 
 before_script:
   - cp .env.example .env
-  - mysql -e 'create database laravel;'
   - composer self-update
   - composer install --no-interaction
   - php artisan key:generate
+  - php artisan migrate
 
 script:
   - vendor/bin/phpunit
+
+before_install:
+  - mysql -e 'create database laravel;'
+
+services:
+  - mysql
+  
+cache:
+  - directories:
+      - vendor
+      - node_modules
