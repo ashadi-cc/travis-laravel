@@ -1,0 +1,46 @@
+version: 2
+jobs:
+  test:
+    docker:
+      - image: circleci/php:7.2-apache-stretch-node-browsers
+      - image: circleci/mariadb
+    environment:
+      MYSQL_DATABASE: laravel
+      MYSQL_ROOT_PASSWORD: password
+      DB_HOST: mysql
+      DB_USERNAME: root
+      DB_PASSWORD: password
+    steps:
+      - checkout
+
+      - run:
+          name: Setup Environment Variables
+          command: |
+            sudo apt-get install -y libzip-dev
+            sudo docker-php-ext-install zip
+            sudo apt-get update
+            sudo apt-get install -y zlib1g-dev libicu-dev g++
+            sudo docker-php-ext-configure intl
+            sudo docker-php-ext-install intl
+            sudo docker-php-ext-install pdo_mysql
+
+      - run:
+          name: Install dependencies
+          command: |
+            cp .env.example .env
+            composer install
+            php artisan key:generate
+            php artisan migrate
+      - run:
+          name: Testing
+          command: ./vendor/bin/phpunit
+
+workflows:
+  build:
+    jobs:
+      - test:
+          filters:
+            branches:
+              only:
+                - master
+  version: 2
