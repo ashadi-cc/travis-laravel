@@ -3,13 +3,11 @@ jobs:
   build:
     docker:
       - image: circleci/php:7.2-node-browsers
-      - image: circleci/mysql:5.7
-    environment:
-      MYSQL_DATABASE: laravel
-      MYSQL_ROOT_PASSWORD: password
-      DB_HOST: localhost
-      DB_USERNAME: root
-      DB_PASSWORD: password
+      - image: circleci/mariadb
+        environment:
+          MYSQL_DATABASE: laravel
+          MYSQL_ROOT_PASSWORD: password
+
     steps:
       - checkout
       - run:
@@ -18,7 +16,7 @@ jobs:
             sudo apt update
             sudo docker-php-ext-configure pdo_mysql
             sudo docker-php-ext-install zip bcmath pdo_mysql
-            #sudo apt-get install mysql-client
+            sudo apt-get install default-mysql-client
       - run: sudo composer self-update
 
       # Download and cache dependencies
@@ -35,16 +33,23 @@ jobs:
           key: v1-dependencies-{{ checksum "composer.json" }}
           paths:
             - ./vendor
+            
+      - run:
+          name: Waiting mysql to be ready
+          command: ./wait-for-it.sh 127.0.0.1:3306 --timeout=30
 
       - run:
           name: Running test
+          environment:
+            DB_HOST: 127.0.0.1
+            DB_USERNAME: root
+            DB_PASSWORD: password
+            DB_PORT: 3306
           command: |
             cp .env.example .env
             php artisan key:generate
             php artisan migrate
-      - run:
-          name: Testing
-          command: ./vendor/bin/phpunit
+            ./vendor/bin/phpunit
 
 workflows:
   notify_deploy:
